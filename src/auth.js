@@ -40,6 +40,34 @@ router.post("/signup", async (req, res) => {
     }
 });
 
+// LOGOUT
+router.post("/logout", async (req, res) => {
+    try {
+        const { userId } = req.body;
+
+        if (!userId) {
+            return res.status(400).json({ success: false, error: "userId is required" });
+        }
+
+        // 🔥 Create log
+        await createLog(
+            userId,
+            "USER_LOGOUT",
+            `User with ID ${userId} logged out`
+        );
+
+        res.json({
+            success: true,
+            message: "Logged out successfully"
+        });
+
+    } catch (err) {
+        console.error(err);
+        res.status(500).json({ success: false, error: "Server error" });
+    }
+});
+
+
 // LOGIN
 router.post("/login", async (req, res) => {
     try {
