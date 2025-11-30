@@ -242,6 +242,33 @@ router.get("/filters", async (req, res) => {
     }
 });
 
+router.get("/place-url", async (req, res) => {
+  try {
+    const { placeid } = req.query;
+
+    if (!placeid) {
+      return res.status(400).json({ error: "placeid is required" });
+    }
+
+    const details = await fetch(
+      `https://maps.googleapis.com/maps/api/place/details/json?place_id=${placeid}&fields=url&key=${process.env.GOOGLE_API_KEY}`
+    );
+
+    const data = await details.json();
+
+    if (!data.result || !data.result.url) {
+      return res.status(404).json({ error: "No URL found for this place" });
+    }
+
+    res.json({ url: data.result.url });
+
+  } catch (err) {
+    console.error("Error fetching Google Maps URL:", err);
+    res.status(500).json({ error: "Google API error", details: err.message });
+  }
+});
+
+
 // GET /api/places/stats - Get statistics
 router.get("/stats", async (req, res) => {
     try {
