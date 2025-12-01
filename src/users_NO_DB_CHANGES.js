@@ -180,6 +180,8 @@ router.get("/liked-places", authenticateToken, async (req, res) => {
     try {
         const userId = req.user.id;
 
+        console.log('Fetching liked places for user:', userId); // Debug
+
         const result = await pool.query(
             `SELECT 
                 p.placeid as id,
@@ -188,13 +190,15 @@ router.get("/liked-places", authenticateToken, async (req, res) => {
                 p.address,
                 p.rating,
                 p.imageurl as image_url,
-                ulp.created_at as liked_at
-             FROM user_liked_places ulp
+                ulp.liked_at
+             FROM user_liked_places as ulp
              JOIN places p ON ulp.place_id = p.placeid
              WHERE ulp.user_id = $1
-             ORDER BY ulp.created_at DESC`,
+             ORDER BY ulp.liked_at DESC`,
             [userId]
         );
+
+        console.log('Found places:', result.rows.length); // Debug
 
         res.json({
             success: true,
@@ -202,7 +206,7 @@ router.get("/liked-places", authenticateToken, async (req, res) => {
         });
 
     } catch (error) {
-        console.error('Get liked places error:', error);
+        console.error('Get liked places error:', error.message); // Full error
         res.status(500).json({ 
             success: false, 
             message: 'Server error',
@@ -210,7 +214,6 @@ router.get("/liked-places", authenticateToken, async (req, res) => {
         });
     }
 });
-
 // POST /api/users/liked-places - Like a place
 router.post("/liked-places", authenticateToken, async (req, res) => {
     try {
@@ -251,10 +254,10 @@ router.post("/liked-places", authenticateToken, async (req, res) => {
         }
 
         // Add to favorites
-        await pool.query(
-            'INSERT INTO user_liked_places (user_id, place_id, created_at) VALUES ($1, $2, NOW())',
-            [userId, placeId]
-        );
+       await pool.query(
+    'INSERT INTO user_liked_places (user_id, place_id, liked_at) VALUES ($1, $2, NOW())',
+    [userId, placeId]
+)
 
         // Create log directly
         await pool.query(
