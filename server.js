@@ -1,4 +1,5 @@
 const express = require("express");
+const app = express();
 const allowedOrigins = [
   'http://localhost:5173',
   'https://katerji-project.onrender.com'
@@ -20,7 +21,6 @@ const usersRoutes = require("./src/users_NO_DB_CHANGES");
 const geminiRoutes = require("./src/gemini");  // ← ADD THIS LINE
 require("dotenv").config();
 
-const app = express();
 
 app.use(cors({
   origin: "http://localhost:5173",
