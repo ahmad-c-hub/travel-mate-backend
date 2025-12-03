@@ -1,5 +1,19 @@
 const express = require("express");
-const cors = require("cors");
+const allowedOrigins = [
+  'http://localhost:5173',
+  'https://katerji-project.onrender.com'
+];
+
+app.use(cors({
+  origin: function(origin, callback) {
+    if (!origin || allowedOrigins.includes(origin)) {
+      callback(null, true);
+    } else {
+      callback(new Error('Not allowed by CORS'));
+    }
+  },
+  credentials: true
+}));
 const authRoutes = require("./src/auth");
 const placesRoutes = require("./src/places");
 const usersRoutes = require("./src/users_NO_DB_CHANGES");
