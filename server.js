@@ -1,5 +1,7 @@
 const express = require("express");
+const cors = require('cors');  // ← ADD THIS
 const app = express();
+
 const allowedOrigins = [
   'http://localhost:5173',
   'https://katerji-project.onrender.com'
@@ -15,17 +17,14 @@ app.use(cors({
   },
   credentials: true
 }));
+
 const authRoutes = require("./src/auth");
 const placesRoutes = require("./src/places");
 const usersRoutes = require("./src/users_NO_DB_CHANGES");
-const geminiRoutes = require("./src/gemini");  // ← ADD THIS LINE
+const geminiRoutes = require("./src/gemini");
 require("dotenv").config();
 
-
-app.use(cors({
-  origin: "http://localhost:5173",
-  credentials: true
-}));
+// DELETE THE OLD CORS HERE (lines 26-29)
 
 app.use(express.json());
 
@@ -36,7 +35,7 @@ app.get("/", (req, res) => {
 app.use("/auth", authRoutes);
 app.use("/api/places", placesRoutes);
 app.use("/api/users", usersRoutes);
-app.use("/api/gemini", geminiRoutes);  // ← ADD THIS LINE
+app.use("/api/gemini", geminiRoutes);
 
 const PORT = process.env.PORT || 5000;
 app.listen(PORT, () => console.log(`Server running on port ${PORT}`));
