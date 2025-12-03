@@ -4,7 +4,9 @@ const app = express();
 
 const allowedOrigins = [
   'http://localhost:5173',
-  'https://katerji-project.onrender.com'
+  'https://katerji-project.onrender.com',
+  'https://travelmatev0.onrender.com'
+
 ];
 
 app.use(cors({
